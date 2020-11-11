@@ -30,7 +30,10 @@
     "node-sass": "^4.14.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "default": "gulp default",
+    "start": "npm run default",
+    "prod": "gulp build",
+    "build": "npm run prod"
   },
   "author": "",
   "license": "ISC"

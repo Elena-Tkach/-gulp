@@ -1,6 +1,4 @@
 'use strict';
-
-
 const { src, dest, parallel, series, watch } = require('gulp');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
@@ -12,14 +10,14 @@ const svgSprite = require('gulp-svg-sprite');
 const rename = require("gulp-rename");
 const uglify = require('gulp-uglify-es').default;
 const cleanCSS = require('gulp-clean-css');
-const babel = require('gulp-babel');
 const imagemin = require('gulp-imagemin');
 const htmlmin = require('gulp-htmlmin');
-const concat = require('gulp-concat');
+
+
 
 
 const html = () => {
-    return src(['./src/index.html'])
+    return src(['./src/*.html'])
         .pipe(fileInclude())
         .pipe(dest('./dist'))
         .pipe(browserSync.stream())
@@ -33,7 +31,7 @@ const css = () => {
         .pipe(rename({ suffix: '.min' }))
         .pipe(autoprefixer({ cascade: false }))
         .pipe(sourcemaps.write('.'))
-        .pipe(dest('./dist/css/'))
+        .pipe(dest('./dist'))
         .pipe(browserSync.stream());
 }
 
@@ -53,15 +51,12 @@ const svgSprites = () => {
 
 const js = () => {
     return src('./src/js/*.js')
-        .pipe(babel({
-            presets: ['@babel/env']
-        }))
+        .pipe(fileInclude())
         .pipe(sourcemaps.init())
-        .pipe(concat('script.js'))
         .pipe(rename('script.min.js'))
         .pipe(uglify())
         .pipe(sourcemaps.write('.'))
-        .pipe(dest('./dist/js'))
+        .pipe(dest('./dist'))
         .pipe(browserSync.stream());
 }
 
@@ -99,7 +94,7 @@ const watchFiles = () => {
     watch('./src/scss/**/*.scss', css);
     watch('./src/resources/**', resources);
     watch('./src/js/**.js', js);
-    watch('src/fonts/*.{woff,woff2}', fonts);
+    watch('./src/fonts/*.{woff,woff2}', fonts);
     watch('./src/img/**.svg', svgSprites);
     watch('./src/img/**/*.{jpg,png,svg,ico,gif,webp}', images);
 
@@ -129,24 +124,20 @@ const cssBuild = () => {
         .pipe(cleanCSS({
             level: 2
         }))
-        .pipe(dest('./dist/css/'))
+        .pipe(dest('./dist'))
 }
 
 
 const jsBuild = () => {
     return src('./src/js/*.js')
-        .pipe(babel({
-            presets: ['@babel/env']
-        }))
-
-        .pipe(concat('script.js'))
+        .pipe(fileInclude())
         .pipe(rename('script.min.js'))
         .pipe(uglify())
-        .pipe(dest('./dist/js'))
+        .pipe(dest('./dist'))
 }
 
 const htmlBuild = () => {
-    return src(['./src/index.html'])
+    return src(['./src/*.html'])
         .pipe(fileInclude())
         .pipe(htmlmin({ collapseWhitespace: true }))
         .pipe(dest('./dist'))
